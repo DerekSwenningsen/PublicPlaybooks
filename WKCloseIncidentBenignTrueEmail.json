@@ -2,25 +2,50 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "workflows_TestCloseandEmail_name": {
-            "defaultValue": "TestCloseandEmail",
-            "type": "String"
+        "PlaybookName": {
+            "defaultValue": "<PlaybookName>",
+            "type": "string"
         },
-        "connections_azuresentinel_externalid": {
-            "defaultValue": "/subscriptions/70e88850-2ca9-42a0-a36a-f4dfc5b1c708/resourceGroups/OMS-ResourceGroup/providers/Microsoft.Web/connections/azuresentinel",
-            "type": "String"
-        },
-        "connections_office365_externalid": {
-            "defaultValue": "/subscriptions/70e88850-2ca9-42a0-a36a-f4dfc5b1c708/resourceGroups/OMS-ResourceGroup/providers/Microsoft.Web/connections/office365",
-            "type": "String"
+        "UserName": {
+            "defaultValue": "<username>@<domain>",
+            "type": "string"
         }
     },
-    "variables": {},
+    "variables": {
+        "AzureSentinelConnectionName": "[concat('azuresentinel-', parameters('PlaybookName'))]",
+        "Office365ConnectionName": "[concat('office365-', parameters('PlaybookName'))]"
+    },
     "resources": [
+        {
+            "type": "Microsoft.Web/connections",
+            "apiVersion": "2016-06-01",
+            "name": "[variables('AzureSentinelConnectionName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "displayName": "[parameters('UserName')]",
+                "customParameterValues": {},
+                "api": {
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azuresentinel')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Web/connections",
+            "apiVersion": "2016-06-01",
+            "name": "[variables('Office365ConnectionName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "displayName": "[parameters('UserName')]",
+                "customParameterValues": {},
+                "api": {
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/office365')]"
+                }
+            }
+        },
         {
             "type": "Microsoft.Logic/workflows",
             "apiVersion": "2017-07-01",
-            "name": "[parameters('workflows_TestCloseandEmail_name')]",
+            "name": "[parameters('PlaybookName')]",
             "location": "eastus",
             "properties": {
                 "state": "Enabled",
@@ -42,7 +67,7 @@
                                 },
                                 "host": {
                                     "connection": {
-                                        "name": "@parameters('$connections')['azuresentinel_1']['connectionId']"
+                                        "name": "@parameters('$connections')['azuresentinel']['connectionId']"
                                     }
                                 },
                                 "path": "/subscribe"
@@ -56,7 +81,7 @@
                             "inputs": {
                                 "host": {
                                     "connection": {
-                                        "name": "@parameters('$connections')['azuresentinel_1']['connectionId']"
+                                        "name": "@parameters('$connections')['azuresentinel']['connectionId']"
                                     }
                                 },
                                 "method": "get",
@@ -74,7 +99,7 @@
                                 "body": {
                                     "Body": "<p>Incident ID: @{body('Alert_-_Get_incident')?['id']}<br>\n<br>\nIncident Description: @{body('Alert_-_Get_incident')?['properties']?['description']}<br>\n<br>\nIncident URL: @{body('Alert_-_Get_incident')?['properties']?['incidentUrl']}<br>\n<br>\nAdditional Information:<br>\n@{body('Update_incident')?['properties']?['classification']}<br>\n@{body('Update_incident')?['properties']?['classificationComment']}<br>\n@{body('Update_incident')?['properties']?['classificationReason']}</p>",
                                     "Subject": " @{body('Alert_-_Get_incident')?['properties']?['title']}: Closed Benign True",
-                                    "To": "derek.swenningsen@meetascent.com"
+                                    "To": "[parameters('UserName')]"
                                 },
                                 "host": {
                                     "connection": {
@@ -104,7 +129,7 @@
                                 },
                                 "host": {
                                     "connection": {
-                                        "name": "@parameters('$connections')['azuresentinel_1']['connectionId']"
+                                        "name": "@parameters('$connections')['azuresentinel']['connectionId']"
                                     }
                                 },
                                 "method": "put",
@@ -117,20 +142,24 @@
                 "parameters": {
                     "$connections": {
                         "value": {
-                            "azuresentinel_1": {
-                                "connectionId": "[parameters('connections_azuresentinel_externalid')]",
-                                "connectionName": "azuresentinel",
-                                "id": "/subscriptions/70e88850-2ca9-42a0-a36a-f4dfc5b1c708/providers/Microsoft.Web/locations/eastus/managedApis/azuresentinel"
+                            "azuresentinel": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', variables('AzureSentinelConnectionName'))]",
+                                "connectionName": "[variables('AzureSentinelConnectionName')]",
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azuresentinel')]"
                             },
                             "office365": {
-                                "connectionId": "[parameters('connections_office365_externalid')]",
-                                "connectionName": "office365",
-                                "id": "/subscriptions/70e88850-2ca9-42a0-a36a-f4dfc5b1c708/providers/Microsoft.Web/locations/eastus/managedApis/office365"
+                                "connectionId": "[resourceId('Microsoft.Web/connections', variables('Office365ConnectionName'))]",
+                                "connectionName": "[variables('Office365ConnectionName')]",
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/office365')]"
                             }
                         }
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/connections', variables('AzureSentinelConnectionName'))]",
+                "[resourceId('Microsoft.Web/connections', variables('Office365ConnectionName'))]"
+            ]
         }
     ]
 }
