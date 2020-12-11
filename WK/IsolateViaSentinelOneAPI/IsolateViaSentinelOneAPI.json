@@ -13,6 +13,10 @@
         "LogAnalyticsWorkspaceName": {
             "defaultValue": "<LogAnalyticsWorkspaceName>",
             "type": "string"
+        },
+        "APIKey": {
+            "defaultValue": "<SentinelOneAPIKey>",
+            "type": "string"
         }
     },
     "variables": {
@@ -160,10 +164,10 @@
                                         "method": "post",
                                         "path": "/queryData",
                                         "queries": {
-                                            "resourcegroups": "[concat(resourceGroup().name)]",
-                                            "resourcename": "Ascent-Sentinel-Workspace",
+                                            "resourcegroups": "[resourceGroup().name]",
+                                            "resourcename": "[parameters('LogAnalyticsWorkspaceName')]",
                                             "resourcetype": "Log Analytics Workspace",
-                                            "subscriptions": "[concat(subscription().subscriptionId)]",
+                                            "subscriptions": "[subscription().subscriptionId]",
                                             "timerange": "Set in query"
                                         }
                                     }
