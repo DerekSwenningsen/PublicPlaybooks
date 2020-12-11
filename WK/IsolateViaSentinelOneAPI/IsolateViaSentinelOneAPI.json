@@ -112,7 +112,7 @@
                                                     }
                                                 },
                                                 "headers": {
-                                                    "Authorization": "ApiToken 12345"
+                                                    "Authorization": "[concat('ApiToken ', [parameters('UserName')])]"
                                                 },
                                                 "method": "POST",
                                                 "uri": "https://usea1-007.sentinelone.net/web/api/v2.1/agents/actions/disconnect"
