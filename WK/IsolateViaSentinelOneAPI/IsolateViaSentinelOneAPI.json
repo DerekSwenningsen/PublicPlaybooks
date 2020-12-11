@@ -9,6 +9,10 @@
         "UserName": {
             "defaultValue": "<username>@<domain>",
             "type": "string"
+        },
+        "LogAnalyticsWorkspaceName": {
+            "defaultValue": "<LogAnalyticsWorkspaceName>",
+            "type": "string"
         }
     },
     "variables": {
