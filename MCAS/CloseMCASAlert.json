@@ -9,6 +9,10 @@
         "UserName": {
             "defaultValue": "<username>@<domain>",
             "type": "string"
+        },
+        "APIKey": {
+            "defaultValue": "<enter your API key to MCAS API>",
+            "type": "string"
         }
     },
     "variables": {
@@ -174,7 +178,7 @@
                                                                     "sendFeedback": true
                                                                 },
                                                                 "headers": {
-                                                                    "Authorization": "Token <PUT API KEY HERE>"
+                                                                    "Authorization": "Token parameters('APIKey')"
                                                                 },
                                                                 "method": "POST",
                                                                 "uri": "https://ascentclouds.portal.cloudappsecurity.com/api/v1/alerts/close_benign/"
@@ -212,7 +216,7 @@
                                                                     "sendFeedback": true
                                                                 },
                                                                 "headers": {
-                                                                    "Authorization": "Token TlxMSkFbTENAWktcAVpcAV9AXVtOQwFMQ0BaS05fX1xKTFpdRltWAUxAQlMeH00WGElOGUkcGBgdHRlKGRYXSxYcGEkbGEpLHR0bHhcZGx5JSRZKThpNGBkYGhsbHRgcGEpKHUsfTU1JHhhN"
+                                                                    "Authorization": "Token parameters('APIKey')"
                                                                 },
                                                                 "method": "POST",
                                                                 "uri": "https://ascentclouds.portal.cloudappsecurity.com/api/v1/alerts/close_false_positive/"
@@ -249,7 +253,7 @@
                                                                     "sendFeedback": true
                                                                 },
                                                                 "headers": {
-                                                                    "Authorization": "Token TlxMSkFbTENAWktcAVpcAV9AXVtOQwFMQ0BaS05fX1xKTFpdRltWAUxAQlMeH00WGElOGUkcGBgdHRlKGRYXSxYcGEkbGEpLHR0bHhcZGx5JSRZKThpNGBkYGhsbHRgcGEpKHUsfTU1JHhhN"
+                                                                    "Authorization": "Token parameters('APIKey')"
                                                                 },
                                                                 "method": "POST",
                                                                 "uri": "https://ascentclouds.portal.cloudappsecurity.com/api/v1/alerts/close_true_positive/"
