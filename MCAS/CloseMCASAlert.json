@@ -13,6 +13,10 @@
         "APIKey": {
             "defaultValue": "<enter your API key to MCAS API>",
             "type": "string"
+        },
+        "MCASURL": {
+            "defaultValue": "<enter your MCAS URL. Ex: https://company.us.portal.cloudappsecurity.com>",
+            "type": "string"
         }
     },
     "variables": {
@@ -181,7 +185,7 @@
                                                                     "Authorization": "[concat('Token ', parameters('APIKey'))]"
                                                                 },
                                                                 "method": "POST",
-                                                                "uri": "https://ascentclouds.portal.cloudappsecurity.com/api/v1/alerts/close_benign/"
+                                                                "uri": "[concat(parameters('MCASURL'), '/api/v1/alerts/close_benign/')]"
                                                             }
                                                         }
                                                     },
@@ -219,7 +223,7 @@
                                                                     "Authorization": "[concat('Token ', parameters('APIKey'))]"
                                                                 },
                                                                 "method": "POST",
-                                                                "uri": "https://ascentclouds.portal.cloudappsecurity.com/api/v1/alerts/close_false_positive/"
+                                                                "uri": "[concat(parameters('MCASURL'), '/api/v1/alerts/close_benign/')]"
                                                             }
                                                         }
                                                     },
@@ -256,7 +260,7 @@
                                                                     "Authorization": "[concat('Token ', parameters('APIKey'))]"
                                                                 },
                                                                 "method": "POST",
-                                                                "uri": "https://ascentclouds.portal.cloudappsecurity.com/api/v1/alerts/close_true_positive/"
+                                                                "uri": "[concat(parameters('MCASURL'), '/api/v1/alerts/close_benign/')]"
                                                             }
                                                         }
                                                     },
