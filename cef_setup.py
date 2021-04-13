@@ -1,4 +1,4 @@
-#! /usr/local/bin/python3
+#! /usr/bin/python3
 # ----------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ----------------------------------------------------------------------------
@@ -32,7 +32,7 @@ import re
 
 rsyslog_daemon_name = "rsyslog"
 syslog_ng_daemon_name = "syslog-ng"
-omsagent_file_name = "onboard_agent.sh"
+omsagent_file_name = "omsagent-1.13.35-0.universal.x64.sh"
 oms_agent_url = "https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/" + omsagent_file_name
 help_text = "Optional arguments for the python script are:\n\t-T: for TCP\n\t-U: for UDP which is the default value.\n\t-F: for no facility restrictions.\n\t-p: for changing default port from 25226"
 omsagent_default_incoming_port = "25226"
@@ -157,9 +157,9 @@ def install_omsagent(workspace_id, primary_key, oms_agent_install_url):
     omsagent_proxy_conf = os.getenv('https_proxy')
     if omsagent_proxy_conf is not None:
         print("Detected https_proxy environment variable set to " + omsagent_proxy_conf)
-        command_tokens = ["sh", omsagent_file_name, "--install", "-w", workspace_id, "-s", primary_key]
+        command_tokens = ["sh", omsagent_file_name, "--install", "-w", workspace_id, "-s", primary_key, "-d", oms_agent_install_url]
     else:
-        command_tokens = ["sh", omsagent_file_name, "--install", "-w", workspace_id, "-s", primary_key]
+        command_tokens = ["sh", omsagent_file_name, "--install", "-w", workspace_id, "-s", primary_key, "-d", oms_agent_install_url]
     print_notice(" ".join(command_tokens))
     install_omsagent_command = subprocess.Popen(command_tokens, stdout=subprocess.PIPE)
     o, e = install_omsagent_command.communicate()
@@ -228,7 +228,7 @@ def set_omsagent_configuration(workspace_id, omsagent_incoming_port):
     print("Creating omsagent configuration to listen to syslog daemon forwarding port - " + omsagent_incoming_port)
     print("Configuration location is - " + configuration_path)
     mkdir_command_tokens = ["sudo", "mkdir", "-p", configuration_directory]
-    wget_command_tokens = ["sudo", "wget", "-O", configuration_path, oms_agent_configuration_url]
+    wget_command_tokens = ["sudo", "cp", "security_events.conf", configuration_path]
     print("Download configuration into the correct directory")
     print_notice(" ".join(mkdir_command_tokens))
     print_notice(" ".join(wget_command_tokens))
